@@ -1,16 +1,17 @@
 import { Request, Response } from 'express'
-// import connection from '../database/connection'
 
 import Pj from '../models/Pj'
 import Pf from '../models/Pf'
-// import EnderecoPf from '../models/EnderecoPf'
+import EnderecoPf from '../models/EnderecoPf'
 import EnderecoPj from '../models/EnderecoPj'
 import DadosPj from '../models/DadosPj'
+import DadosPf from '../models/DadosPf'
 
 interface IDados {
   // eslint-disable-next-line camelcase
   pj_id?: string;
-  pfId?: string;
+  // eslint-disable-next-line camelcase
+  pf_id?: string;
   email: string;
   telefone: number;
   celular: number;
@@ -40,8 +41,6 @@ export default new (class UserController {
       const userPj = { razaoSocial, cnpj }
 
       try {
-        // const insertedUser = await Pj.create([userPj], { session: session })
-
         const insertedUser = await Pj.create([userPj])
 
         // eslint-disable-next-line camelcase
@@ -67,15 +66,14 @@ export default new (class UserController {
             pj_id: pj_id
           }
         })
-        // await EnderecoPj.create([userAddresses], { session: session })
 
         await EnderecoPj.create(userAddresses)
 
-        // session.endSession()
-
-        response.status(200).json({ succes: true, message: 'User registred!' })
+        response.status(201).json({ succes: true, message: 'User registred!' })
       } catch (error) {
         console.log(error)
+
+        response.status(400).json({ succes: false, message: 'Something went wrong.' })
       }
     } else {
       const { nome, cpf, sexo, dataNasc } = request.body
@@ -83,28 +81,40 @@ export default new (class UserController {
       const userPf = { nome, cpf, sexo, dataNasc }
 
       try {
-        await Pf.create([userPf])
+        const insertedUser = await Pf.create([userPf])
 
-        // session.endSession()
+        // eslint-disable-next-line camelcase
+        const pf_id: string = insertedUser[0].id
+
+        const { email, telefone, celular, foto } = request.body
+
+        const dadosPf: IDados = { pf_id, email, telefone, celular, foto }
+
+        await DadosPf.create([dadosPf])
+
+        const { endereco } = request.body
+
+        const userAddresses = endereco.map((endereco: IAddress) => {
+          return {
+            endereco: endereco.endereco,
+            numero: endereco.numero,
+            complemento: endereco.complemento,
+            bairro: endereco.bairro,
+            cidade: endereco.cidade,
+            estado: endereco.estado,
+            cep: endereco.cep,
+            pf_id: pf_id
+          }
+        })
+
+        await EnderecoPf.create(userAddresses)
+
+        response.status(201).json({ succes: true, message: 'User registred!' })
       } catch (error) {
         console.log(error)
+
+        response.status(400).json({ succes: false, message: 'Something went wrong.' })
       }
     }
-
-    // const userEndereco = [{
-    //   endereco,
-    //   numero,
-    //   complemento,
-    //   bairro,
-    //   cidade,
-    //   estado,
-    //   cep
-    // }]
-
-    // userEndereco.map(endereco => {
-
-    // })
-
-    // await Endereco.create([userEndereco], { session: session })
   }
 })()
