@@ -1,9 +1,6 @@
 import { Router } from 'express'
-// import { Segments, Joi, celebrate } from 'celebrate'
 
 import UserController from './controllers/UserController'
-
-// import userSchema from './schemas/user.schema'
 
 const routes = Router()
 

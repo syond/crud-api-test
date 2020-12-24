@@ -32,9 +32,6 @@ export default new (class UserController {
   async create (request: Request, response: Response) {
     const { tipo } = request.body
 
-    // const session = await connection.startSession()
-    // session.startTransaction()
-
     if (tipo === 'pj') {
       const { razaoSocial, cnpj } = request.body
 
