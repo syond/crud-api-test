@@ -114,4 +114,28 @@ export default new (class UserController {
       }
     }
   }
+
+  async delete(request: Request, response: Response) {
+    const { id } = request.params
+
+    let user: Object
+
+    try {
+      user = await Pj.findById(id)
+    } catch (error) {
+      console.log(error)
+
+      response.status(400).json({ succes: false, message: 'User not found.' })
+    }
+
+    try {
+      await Pj.deleteOne(user)
+
+      response.status(200).json({ success: true, message: 'User deleted.' })
+    } catch (error) {
+      console.log(error)
+
+      response.status(400).json({ succes: false, message: 'Something went wrong.' })
+    }  
+  }
 })()
