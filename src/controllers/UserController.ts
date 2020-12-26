@@ -135,7 +135,25 @@ export default new (class UserController {
     } catch (error) {
       console.log(error)
 
-      response.status(400).json({ succes: false, message: 'Something went wrong.' })
+      response.status(500).json({ succes: false, message: 'Internal Server Error' })
+    }  
+  }
+
+  async show(request: Request, response: Response) {
+    const { id } = request.params
+
+    try {
+      const user = await Pj.findById(id)
+      const dadosPj = await DadosPj.find({ pj_id: user.id })
+      const enderecoPj = await EnderecoPj.find({ pj_id: user.id })
+
+      const userData = [{user, dadosPj, enderecoPj}]
+
+      response.status(200).json({ success: true, results: userData })
+    } catch (error) {
+      console.log(error)
+
+      response.status(400).json({ succes: false, message: 'User not found.' })
     }  
   }
 })()
