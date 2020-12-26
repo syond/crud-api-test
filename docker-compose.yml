@@ -1,0 +1,20 @@
+version: "3"
+
+services: 
+    db:
+        image: mongo:4.4
+        container_name: crud-api-test-db
+        restart: always
+        volumes: 
+            - ./database:/data/db
+        ports: 
+            - 27017:27017
+        networks: 
+            - crud-api-test
+        environment: 
+            MONGO_INITDB_DATABASE: crud-api-test
+
+networks: 
+    crud-api-test:
+        name: crud-api-test
+        driver: bridge
