@@ -16,4 +16,6 @@ routes.put('/api/v1/users/:id/update', (req, res) => {
 
 routes.delete('/api/v1/users/:id/delete', UserController.delete)
 
+routes.get('/api/v1/users/:id/show', UserController.show)
+
 export default routes
